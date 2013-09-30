@@ -210,13 +210,16 @@ class CheckAndText(CheckAndValue):
 
 class SeedInput(CheckAndText):
     def __init__(self):
-        CheckAndText.__init__(self, "Seed value", "The seed value adds an extra bit of randomness to the generated password.\nEnter random text to seed your generated password.")
+        CheckAndText.__init__(self, "Seed value",
+            "The seed value adds an extra bit of randomness to the generated password.\n"
+            "Enter random text to seed your generated password.")
         self.entry.set_max_length(16)
 
 
 class ExcludeInput(CheckAndText):
     def __init__(self):
-        CheckAndText.__init__(self, "Exclude characters", "Characters to exclude from the generated password.")
+        CheckAndText.__init__(self, "Exclude characters",
+            "Characters to exclude from the generated password.")
 
 
 class CheckAndFile(CheckAndValue):
@@ -268,11 +271,14 @@ class GenerateButton(Gtk.Button):
             executed = CommandExecution(self.builder.build())
         except ModeError as m:
             if m.value == []:
-                ErrorDialogue("All character types are set to disabled.", "Can't create a password without characters!")
+                ErrorDialogue(  "All character types are set to disabled.",
+                                "Can't create a password without characters!")
             else:
-                ErrorDialogue("An unforseen error occurred concerning the character type checkboxes.", "Mode contents:\n" + str(m.value))
+                ErrorDialogue(  "An unforseen error occurred concerning the character "
+                                "type checkboxes.", "Mode contents:\n" + str(m.value))
         except SubprocessError as e:
-            ErrorDialogue("An unforseen error occurred in the APG subprocess.", "stderr output:\n" + str(e.value))
+            ErrorDialogue(  "An unforseen error occurred in the APG subprocess.",
+                            "stderr output:\n" + str(e.value))
         else:
             win = OutputWindow(OutputParser.raw(executed))
             win.set_transient_for(self.get_toplevel())

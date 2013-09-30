@@ -16,7 +16,8 @@ class CommandBuilder:
         pass
     
     def bind(self,inputdevice):
-        for value in ["amount", "length", "seed", "exclude", "dictionary", "filter", "mode", "algorithm", "crypt", "phone"]:
+        for value in ["amount", "length", "seed", "exclude", "dictionary",
+        "filter", "mode", "algorithm", "crypt", "phone"]:
             setattr(self,value,getattr(inputdevice,value))
         self.bound = True
     
