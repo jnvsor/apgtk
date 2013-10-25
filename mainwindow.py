@@ -283,8 +283,11 @@ class GenerateButton(Gtk.Button):
             ErrorDialogue(  "An unforseen error occurred in the APG subprocess.",
                             "stderr output:\n" + str(e.value))
         except Exception as e:
-            ErrorDialogue(  "An unforseen error occurred.",
-                            str(e))
+            if(isinstance(e,IOError) and str(e)[-5:] == "'apg'"):
+                ErrorDialogue(  "APG is not installed!","Please install apg through your "
+                                "package manager.")
+            else:
+                ErrorDialogue(  "An unforseen error occurred.", str(e))
         else:
             win = OutputWindow(OutputParser.raw(executed))
             win.set_transient_for(self.get_toplevel())
