@@ -95,6 +95,7 @@ class AmountInput(DoubleColumn):
         self.adjustment = Gtk.Adjustment(10,1,100,1,10,0)
         self.widget = Gtk.SpinButton()
         self.widget.set_adjustment(self.adjustment)
+        self.adjustment.value_changed()
         
         DoubleColumn.__init__(self, self.label, self.widget)
     
@@ -113,8 +114,10 @@ class LengthInput(DoubleColumn):
         
         self.widget1 = Gtk.SpinButton()
         self.widget1.set_adjustment(self.adjust1)
+        self.adjust1.value_changed()
         self.widget2 = Gtk.SpinButton()
         self.widget2.set_adjustment(self.adjust2)
+        self.adjust2.value_changed()
         
         self.box.pack_start(self.widget1,True,True,0)
         self.box.pack_start(self.widget2,True,True,0)
