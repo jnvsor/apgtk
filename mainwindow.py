@@ -272,13 +272,13 @@ class GenerateButton(Gtk.Button):
         
         try:
             executed = CommandExecution(self.builder.build())
-        except ModeError as m:
-            if m.value == []:
+        except ModeError as e:
+            if e.value == []:
                 ErrorDialogue(  "All character types are set to disabled.",
                                 "Can't create a password without characters!")
             else:
                 ErrorDialogue(  "An unforseen error occurred concerning the character "
-                                "type checkboxes.", "Mode contents:\n" + str(m.value))
+                                "type checkboxes.", "Mode contents:\n" + str(e.value))
         except SubprocessError as e:
             ErrorDialogue(  "An unforseen error occurred in the APG subprocess.",
                             "stderr output:\n" + str(e.value))
