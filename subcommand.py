@@ -4,28 +4,18 @@ class ModeError(Exception):
     def __init__(self, value):
         self.value = value
 
-
 class SubprocessError(Exception):
     def __init__(self, value):
         self.value = value
 
-
 class CommandBuilder:
-    def __init__(self):
-        self.bound = False
-        pass
-    
-    def bind(self,inputdevice):
-        for value in ["amount", "length", "seed", "exclude", "dictionary",
-        "filter", "mode", "algorithm", "crypt", "phone"]:
-            setattr(self,value,getattr(inputdevice,value))
-        self.bound = True
+    def __init__(self,
+          amount, length, seed, exclude, dictionary,
+          filter, mode, algorithm, crypt, phone):
+      self.__dict__.update(locals())
+      del self.self
     
     def build(self):
-        if not self.bound:
-            exit("Fatal error: Unbound CommandBuilder. This should not have happened.")
-            return
-        
         command = ["apg"]
         amount = ["-n", int(self.amount.get_value())]
         min = ["-m", self.length.get_min()]
@@ -73,40 +63,29 @@ class CommandBuilder:
         return  command+algorithm+mode+exclude+amount+min+max+\
                 dictionary+filter+seed+crypt+phone+pronouncedisplay
 
-
 class CommandExecution:
     def __init__(self, command):
         self.command = [str(i) for i in command]
-        
-        self.proc = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        self.out, self.err = self.proc.communicate()
-        if(self.proc.returncode):
-            raise SubprocessError(self.err)
-
-
-class OutputParser:
-    def raw(execution):
-        command = execution.command
-        data = execution.out
-        
+        proc = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.out, err = proc.communicate()
+        if(proc.returncode):
+            raise SubprocessError(err)
+    
+    def as_list(self):
         passwords = []
         
-        for line in data.decode("utf-8").split("\n"):
+        for line in self.out.decode("utf-8").split("\n"):
             line = line.split()
             
             if(line == []):
                 continue
             
             linedict = {"Password": line.pop(0)}
-            
-            if("-t" in command):
+            if("-t" in self.command):
                 linedict["Pronunciation"] = line.pop(0)[1:-1]
-            
-            if("-y" in command):
+            if("-y" in self.command):
                 linedict["Crypt"] = line.pop(0)
-            
-            if("-l" in command):
+            if("-l" in self.command):
                 linedict["Phonetics"] = line.pop(0)
             
             passwords.append(linedict)

@@ -8,17 +8,16 @@ class OutputWindow(Gtk.Window):
         self.set_modal(True)
         self.set_has_resize_grip(False)
         
-        self.model = PasswordModel(data)
-        self.view = PasswordView(self.model,data)
+        model = PasswordModel(data)
+        view = PasswordView(model,data)
         
-        self.scroll = Gtk.ScrolledWindow()
-        self.scroll.add(self.view)
-        self.scroll.set_min_content_height(270)
-        self.scroll.set_min_content_width(600)
+        scroll = Gtk.ScrolledWindow()
+        scroll.add(view)
+        scroll.set_min_content_height(270)
+        scroll.set_min_content_width(600)
         
-        self.add(self.scroll)
-        self.scroll.show_all()
-
+        self.add(scroll)
+        scroll.show_all()
 
 class PasswordModel(Gtk.ListStore):
     def __init__(self, data):
@@ -32,7 +31,6 @@ class PasswordModel(Gtk.ListStore):
                     insert.append(row[i])
             
             self.append(insert)
-
 
 class PasswordView(Gtk.TreeView):
     def __init__(self, model, data):
