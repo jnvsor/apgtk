@@ -204,7 +204,7 @@ class ModeInput(DoubleColumn):
                            ("N", "Numbers"),
                            ("S", "Symbols")]:
             self.widgets[flag] = TriStateCheckButton(name)
-            
+    
     def attach_to_grid(self, grid, left, top):
         grid.attach(self.label, left, top, 2, 1)
         for index, widget in enumerate(sorted(self.widgets.keys())):
