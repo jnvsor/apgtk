@@ -1,19 +1,62 @@
 import subprocess
+from errorwindow import ErrorDialogue
 
 class ModeError(Exception):
     def __init__(self, value):
         self.value = value
 
-class SubprocessError(Exception):
+class ProcessStderr(ChildProcessError):
     def __init__(self, value):
         self.value = value
 
-class CommandBuilder:
-    def __init__(self,
-          amount, length, seed, exclude, dictionary,
-          filter, mode, algorithm, crypt, phone):
-      self.__dict__.update(locals())
-      del self.self
+class CommandExecution:
+    def execute(self):
+        try:
+            self.command = [str(i) for i in self.build()]
+            proc = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.out, err = proc.communicate()
+            if(proc.returncode):
+                raise ProcessStderr(err)
+        
+        except ModeError as e:
+            if e.value == []:
+                ErrorDialogue(  "All character types are set to disabled.",
+                                "Can't create a password without characters!")
+            else:
+                ErrorDialogue(  "An unforseen error occurred concerning the character "
+                                "type checkboxes.", "Mode contents:\n" + str(e.value))
+        except ProcessStderr as e:
+            ErrorDialogue(  "An unforseen error occurred in the APG subprocess.",
+                            "stderr output:\n" + str(e.value))
+        except Exception as e:
+            if(isinstance(e,IOError) and str(e)[-5:] == "'apg'"):
+                ErrorDialogue(  "APG is not installed!","Please install apg through your "
+                                "package manager.")
+            else:
+                ErrorDialogue(  "An unforseen error occurred.", str(e))
+        else:
+            return True
+    
+    def as_list(self):
+        passwords = []
+        
+        for line in self.out.decode("utf-8").split("\n"):
+            line = line.split()
+            
+            if(line == []):
+                continue
+            
+            linedict = {"Password": line.pop(0)}
+            if("-t" in self.command):
+                linedict["Pronunciation"] = line.pop(0)[1:-1]
+            if("-y" in self.command):
+                linedict["Crypt"] = line.pop(0)
+            if("-l" in self.command):
+                linedict["Phonetics"] = line.pop(0)
+            
+            passwords.append(linedict)
+            
+        return passwords
     
     def build(self):
         command = ["apg"]
@@ -62,32 +105,3 @@ class CommandBuilder:
         
         return  command+algorithm+mode+exclude+amount+min+max+\
                 dictionary+filter+seed+crypt+phone+pronouncedisplay
-
-class CommandExecution:
-    def __init__(self, command):
-        self.command = [str(i) for i in command]
-        proc = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        self.out, err = proc.communicate()
-        if(proc.returncode):
-            raise SubprocessError(err)
-    
-    def as_list(self):
-        passwords = []
-        
-        for line in self.out.decode("utf-8").split("\n"):
-            line = line.split()
-            
-            if(line == []):
-                continue
-            
-            linedict = {"Password": line.pop(0)}
-            if("-t" in self.command):
-                linedict["Pronunciation"] = line.pop(0)[1:-1]
-            if("-y" in self.command):
-                linedict["Crypt"] = line.pop(0)
-            if("-l" in self.command):
-                linedict["Phonetics"] = line.pop(0)
-            
-            passwords.append(linedict)
-            
-        return passwords
