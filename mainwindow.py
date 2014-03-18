@@ -11,59 +11,47 @@ class MainWindow(Gtk.Window):
         self.set_resizable(False)
         self.connect("delete-event", Gtk.main_quit)
         
-        self.exec = CommandExecution()
-        
         grid = Gtk.Grid()
         grid.set_column_spacing(10)
         grid.set_row_spacing(5)
         
         amount = AmountInput()
         amount.attach_to_grid(grid, 0, 0)
-        setattr(self.exec, "amount", amount)
         
         length = LengthInput()
         length.attach_to_grid(grid, 0, 1)
-        setattr(self.exec, "length", length)
         
         seed = CheckAndText("Seed value",
             "The seed value adds an extra bit of randomness to the generated password.\n"
             "Enter random text to seed your generated password.")
         seed.entry.set_max_length(16)
         seed.attach_to_grid(grid, 0, 2)
-        setattr(self.exec, "seed", seed)
         
         exclude = CheckAndText("Exclude characters",
             "Characters to exclude from the generated password.")
         exclude.attach_to_grid(grid, 0, 3)
-        setattr(self.exec, "exclude", exclude)
         
         dictionary = CheckAndFile("Use dictionary file")
         dictionary.attach_to_grid(grid, 0, 4)
-        setattr(self.exec, "dictionary", dictionary)
         
         filter = CheckAndFile("Use filter file")
         filter.attach_to_grid(grid, 0, 5)
-        setattr(self.exec, "filter", filter)
         
         mode = ModeInput()
         mode.attach_to_grid(grid, 0, 6)
-        setattr(self.exec, "mode", mode)
         
         algorithm = AlgorithmRadios()
         algorithm.attach_to_grid(grid, 0, 9)
-        setattr(self.exec, "algorithm", algorithm)
         
         grid.attach(Gtk.Label(label="Display Options"), 0, 12, 2, 1)
         
         crypt = Gtk.CheckButton(label="Crypted")
         crypt.set_tooltip_text("Additionally pass generated passwords through crypt().")
         grid.attach(crypt, 0, 13, 1, 1)
-        setattr(self.exec, "crypt", crypt)
         
         phone = Gtk.CheckButton(label="Phonetical")
         phone.set_tooltip_text("Additionally show the passwords phonetically.")
         grid.attach(phone, 1, 13, 1, 1)
-        setattr(self.exec, "phone", phone)
         
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         box.pack_start(grid,True,True,0)
@@ -84,13 +72,20 @@ class MainWindow(Gtk.Window):
         
         self.add(box)
         box.show_all()
+        
+        bind = locals()
+        bind = { key: bind[key] for key in [
+                "amount", "length", "seed", "exclude", "dictionary",
+                "filter", "mode", "algorithm", "crypt", "phone" ]
+        }
+        self.exec = CommandExecution(bind)
     
     def generate(self, widget):
         if self.exec.execute():
             win = OutputWindow(self.exec.as_list())
             win.set_transient_for(self)
             win.show()
-    
+
 class DoubleColumn:
     def __init__(self, left, right):
         self.leftcolumn = left

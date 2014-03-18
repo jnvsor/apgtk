@@ -10,6 +10,9 @@ class ProcessStderr(ChildProcessError):
         self.value = value
 
 class CommandExecution:
+    def __init__(self, binder):
+        self.input = binder
+    
     def execute(self):
         try:
             self.command = [str(i) for i in self.build()]
@@ -60,47 +63,48 @@ class CommandExecution:
     
     def build(self):
         command = ["apg"]
-        amount = ["-n", int(self.amount.get_value())]
-        min = ["-m", self.length.get_min()]
-        max = ["-x", self.length.get_max()]
+        
+        amount = ["-n", int(self.input["amount"].get_value())]
+        min = ["-m", self.input["length"].get_min()]
+        max = ["-x", self.input["length"].get_max()]
         
         seed, exclude, dictionary, filter, mode, crypt, phone, pronouncedisplay = ([] for x in range(8))
         
-        if(self.seed.get_enabled()):
-            seed = ["-c", self.seed.get_value()]
+        if(self.input["seed"].get_enabled()):
+            seed = ["-c", self.input["seed"].get_value()]
         
-        if(self.exclude.get_enabled()):
-            exclude = ["-E", self.exclude.get_value()]
+        if(self.input["exclude"].get_enabled()):
+            exclude = ["-E", self.input["exclude"].get_value()]
         
-        if(self.dictionary.get_enabled()):
-            dictionary = ["-r", self.dictionary.get_value()]
+        if(self.input["dictionary"].get_enabled()):
+            dictionary = ["-r", self.input["dictionary"].get_value()]
         
-        if(self.filter.get_enabled()):
-            filter = ["-b", self.filter.get_value()]
+        if(self.input["filter"].get_enabled()):
+            filter = ["-b", self.input["filter"].get_value()]
         
-        for index, key in enumerate(sorted(self.mode.widgets.keys())):
-            if(self.mode.widgets[key].get_value() == 1):
+        for index, key in enumerate(sorted(self.input["mode"].widgets.keys())):
+            if(self.input["mode"].widgets[key].get_value() == 1):
                 mode += chr(ord(key)+32)
-            elif(self.mode.widgets[key].get_value() == 2):
+            elif(self.input["mode"].widgets[key].get_value() == 2):
                 mode += key
         
         if(mode == []):
-            if self.algorithm.get_value():
-                raise ModeError(mode)
+            if self.input["algorithm"].get_value():
+                raise ModeError
             """ Pronunciation mode ignores mode setting anyway, but will balk at
             an empty mode setting, so we default but throw exception for random mode """
             mode = ["c", "l", "n", "s"]
         
         mode = ["-M", "".join(mode)]
         
-        algorithm = ["-a", self.algorithm.get_value()]
-        if not self.algorithm.get_value():
+        algorithm = ["-a", self.input["algorithm"].get_value()]
+        if not self.input["algorithm"].get_value():
             pronouncedisplay = ["-t"]
         
-        if(self.crypt.get_active()):
+        if(self.input["crypt"].get_active()):
             crypt = ["-y"]
         
-        if(self.phone.get_active()):
+        if(self.input["phone"].get_active()):
             phone = ["-l"]
         
         return  command+algorithm+mode+exclude+amount+min+max+\
