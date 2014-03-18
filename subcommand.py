@@ -2,8 +2,7 @@ import subprocess
 from errorwindow import ErrorDialogue
 
 class ModeError(Exception):
-    def __init__(self, value):
-        self.value = value
+    pass
 
 class ProcessStderr(ChildProcessError):
     def __init__(self, value):
@@ -21,22 +20,17 @@ class CommandExecution:
             if(proc.returncode):
                 raise ProcessStderr(err)
         
-        except ModeError as e:
-            if e.value == []:
-                ErrorDialogue(  "All character types are set to disabled.",
-                                "Can't create a password without characters!")
-            else:
-                ErrorDialogue(  "An unforseen error occurred concerning the character "
-                                "type checkboxes.", "Mode contents:\n" + str(e.value))
+        except ModeError:
+            ErrorDialogue(  "All character types are set to disabled.",
+                              "Can't create a password without characters!")
         except ProcessStderr as e:
             ErrorDialogue(  "An unforseen error occurred in the APG subprocess.",
                             "stderr output:\n" + str(e.value))
+        except FileNotFoundError:
+            ErrorDialogue(  "APG is not installed!","Please install apg through your "
+                            "package manager.")
         except Exception as e:
-            if(isinstance(e,IOError) and str(e)[-5:] == "'apg'"):
-                ErrorDialogue(  "APG is not installed!","Please install apg through your "
-                                "package manager.")
-            else:
-                ErrorDialogue(  "An unforseen error occurred.", str(e))
+            ErrorDialogue(  "An unforseen error occurred.", str(e))
         else:
             return True
     
