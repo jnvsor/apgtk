@@ -11,9 +11,7 @@ class MainWindow(Gtk.Window):
         self.set_resizable(False)
         self.connect("delete-event", Gtk.main_quit)
         
-        grid = Gtk.Grid()
-        grid.set_column_spacing(10)
-        grid.set_row_spacing(5)
+        grid = Gtk.Grid(column_spacing=10, row_spacing=5)
         
         amount = AmountInput()
         amount.attach_to_grid(grid, 0, 0)
