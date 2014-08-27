@@ -25,12 +25,13 @@ class CommandExecution:
                               "Can't create a password without characters!")
         except ProcessStderr as e:
             ErrorDialogue(  "An unforseen error occurred in the APG subprocess.",
-                            "stderr output:\n" + str(e.value))
+                            "stderr output:\n" + e.value.decode())
         except FileNotFoundError:
             ErrorDialogue(  "APG is not installed!","Please install apg through your "
                             "package manager.")
         except Exception as e:
-            ErrorDialogue(  "An unforseen error occurred.", str(e))
+            ErrorDialogue(  "An unforseen error occurred.", 
+                str(type(e).__name__) + ": " + str(e))
         else:
             return True
     
