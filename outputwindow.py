@@ -24,9 +24,9 @@ class PasswordModel(Gtk.ListStore):
         Gtk.ListStore.__init__(self,*[str] * len(data[0]))
         
         for row in data:
-            insert = [row["Password"]]
+            insert = []
             
-            for i in ["Pronunciation", "Crypt", "Phonetics"]:
+            for i in ["Password", "Crypt", "Pronunciation", "Phonetics"]:
                 if(i in row):
                     insert.append(row[i])
             
@@ -37,7 +37,7 @@ class PasswordView(Gtk.TreeView):
         Gtk.TreeView.__init__(self, model)
         
         index = 0
-        for name in ["Password", "Pronunciation", "Crypt", "Phonetics"]:
+        for name in ["Password", "Crypt", "Pronunciation", "Phonetics"]:
             if name not in data[0].keys():
                 continue
             
