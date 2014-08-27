@@ -34,9 +34,6 @@ class MainWindow(Gtk.Window):
         dictionary = CheckAndFile("Use dictionary file")
         dictionary.attach_to_grid(grid, 0, 4)
         
-        filter = CheckAndFile("Use filter file")
-        filter.attach_to_grid(grid, 0, 5)
-        
         mode = ModeInput()
         mode.attach_to_grid(grid, 0, 6)
         
@@ -76,7 +73,7 @@ class MainWindow(Gtk.Window):
         bind = locals()
         bind = { key: bind[key] for key in [
                 "amount", "length", "seed", "exclude", "dictionary",
-                "filter", "mode", "algorithm", "crypt", "phone" ]
+                "mode", "algorithm", "crypt", "phone" ]
         }
         self.exec = CommandExecution(bind)
     

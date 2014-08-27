@@ -62,7 +62,7 @@ class CommandExecution:
         min = ["-m", self.input["length"].get_min()]
         max = ["-x", self.input["length"].get_max()]
         
-        seed, exclude, dictionary, filter, mode, crypt, phone, pronouncedisplay = ([] for x in range(8))
+        seed, exclude, dictionary, mode, crypt, phone, pronouncedisplay = ([] for x in range(7))
         
         if(self.input["seed"].get_enabled()):
             seed = ["-c", self.input["seed"].get_value()]
@@ -72,9 +72,6 @@ class CommandExecution:
         
         if(self.input["dictionary"].get_enabled()):
             dictionary = ["-r", self.input["dictionary"].get_value()]
-        
-        if(self.input["filter"].get_enabled()):
-            filter = ["-b", self.input["filter"].get_value()]
         
         for index, key in enumerate(sorted(self.input["mode"].widgets.keys())):
             if(self.input["mode"].widgets[key].get_value() == 1):
@@ -102,4 +99,4 @@ class CommandExecution:
             phone = ["-l"]
         
         return  command+algorithm+mode+exclude+amount+min+max+\
-                dictionary+filter+seed+crypt+phone+pronouncedisplay
+                dictionary+seed+crypt+phone+pronouncedisplay
