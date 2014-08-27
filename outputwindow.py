@@ -37,12 +37,17 @@ class PasswordView(Gtk.TreeView):
         Gtk.TreeView.__init__(self, model)
         
         index = 0
+        copyRenderer = Gtk.CellRendererText(editable=True)
+        immuteRenderer = Gtk.CellRendererText()
+        
         for name in ["Password", "Crypt", "Pronunciation", "Phonetics"]:
             if name not in data[0].keys():
                 continue
             
-            renderer = Gtk.CellRendererText()
-            renderer.set_property("editable", True)
+            renderer = copyRenderer
+            if name in ["Pronunciation", "Phonetics"]:
+                renderer = immuteRenderer
+            
             column = Gtk.TreeViewColumn(name, renderer, text=index)
             index+=1
             self.append_column(column)
