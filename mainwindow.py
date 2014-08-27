@@ -99,7 +99,7 @@ class DoubleColumn:
 class AmountInput(DoubleColumn):
     def __init__(self):
         label = Gtk.Label(label="Amount to generate:")
-        self.adjustment = Gtk.Adjustment(10,1,100,1,10,0)
+        self.adjustment = Gtk.Adjustment.new(10,1,100,1,10,0)
         widget = Gtk.SpinButton()
         widget.set_adjustment(self.adjustment)
         self.adjustment.value_changed()
@@ -115,12 +115,12 @@ class LengthInput(DoubleColumn):
         box = Gtk.Box(spacing=5)
         box.set_homogeneous(True)
         
-        self.adjust1 = Gtk.Adjustment(10,8,100,1,10,0)
+        self.adjust1 = Gtk.Adjustment.new(10,8,100,1,10,0)
         widget1 = Gtk.SpinButton()
         widget1.set_adjustment(self.adjust1)
         self.adjust1.value_changed()
         
-        self.adjust2 = Gtk.Adjustment(15,8,100,1,10,0)
+        self.adjust2 = Gtk.Adjustment.new(15,8,100,1,10,0)
         widget2 = Gtk.SpinButton()
         widget2.set_adjustment(self.adjust2)
         self.adjust2.value_changed()
